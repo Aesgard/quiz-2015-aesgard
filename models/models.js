@@ -40,6 +40,8 @@ sequelize.sync().then(function() {
 				pregunta: 'Capital de Italia',
 				respuesta: 'Roma'
 				});
+		}
+		if(count < 2) {
 			Quiz.create({
 				pregunta: 'Capital de Portugal',
 				respuesta: 'Lisboa'
