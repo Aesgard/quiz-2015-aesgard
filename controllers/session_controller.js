@@ -1,8 +1,17 @@
 // MW de autorizacion de accesos HTTP restringidos
 exports.loginRequired = function(req, res, next) {
 	if(req.session.user) {
-		next();
-	} else {
+		//Comprobar tiempo de registro (2 minutos: 120000 milisegundos).
+		var now = new Date().getTime();
+		if(now-req.session.stamp>120000) {
+			delete req.session.user;
+			req.session.errors = [{"message": 'Tiempo de session expirado !'}];
+		} else {
+			req.session.stamp = now;
+			next();
+		}
+	}
+	if(!req.session.user){
 		res.redirect('/login');
 	}
 };
@@ -29,7 +38,7 @@ exports.create = function(req, res) {
 		}
 		//Crear req.session.user y guardar campos id y username
 		//La sesion se define por la existencia de: req.session.user
-		req.session.user = {id:user.id, username:user.username};
+		req.session.user = {id:user.id, username:user.username, stamp:new Date().getTime()};
 
 		res.redirect(req.session.redir.toString()); //redireccion a path anterior a login
 	});
