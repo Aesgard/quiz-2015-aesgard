@@ -40,13 +40,13 @@ exports.create = function(req, res) {
 		//La sesion se define por la existencia de: req.session.user
 		req.session.user = {id:user.id, username:user.username, stamp:new Date().getTime()};
 
-		res.redirect(req.session.redir.toString()); //redireccion a path anterior a login
+		res.redirect(req.session.redir ? req.session.redir.toString() : '/'); //redireccion a path anterior a login
 	});
 };
 
 // Delete /logout -- Destruir sesion
 exports.destroy = function(req, res) {
 	delete req.session.user;
-	res.redirect(req.session.redir.toString()); //redirect a path anterior a login
+	res.redirect(req.session.redir ? req.session.redir.toString() : '/'); //redirect a path anterior a login
 };
 
