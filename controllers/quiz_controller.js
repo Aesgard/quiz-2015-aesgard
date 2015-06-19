@@ -106,6 +106,34 @@ exports.answer = function(req, res) {
 	});
 };
 
+//GET /quizes/statistics
+exports.statistics = function(req, res) {
+	var data = [
+		{text: "N&uacute;mero de preguntas",                      value: 0},	//index 0
+		{text: "N&uacute;mero de comentarios",                    value: 0},	//index 1
+		{text: "N&uacute;mero medio de comentarios por pregunta", value: 0},	//index 2
+		{text: "N&uacute;mero de preguntas sin comentarios",      value: 0},	//index 3
+		{text: "N&uacute;mero de preguntas con comentarios",      value: 0}		//index 4
+	];
+	models.Quiz.findAll({
+		include: [{ model: models.Comment }]
+	}).then(function(quizes) {
+		data[0].value = quizes.length;
+		var numComments;
+		for(var i in quizes) {
+			numComments = quizes[i].Comments ? quizes[i].Comments.length : 0;
+			if(numComments>0) {
+				data[1].value += numComments;
+				data[4].value ++;
+			} else {
+				data[3].value ++;
+			}
+		}
+		data[2].value = data[1].value / data[0].value;
+		res.render('quizes/statistics', {data: data, quizes: quizes, errors: []});
+	});
+};
+
 //GET /author
 exports.author = function(req, res) {
 	res.render('author', {errors: []});
